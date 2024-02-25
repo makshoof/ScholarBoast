@@ -14,21 +14,29 @@
         <p>Download the app APK file by clicking the button below.</p>
         <p>This app is currently only available on mobile devices and is not supported on desktop or laptop.</p>
         <button class="btn" id="downloadButton">Download Scholar Boost App on Mobile</button>
-
     </div>
 
     <script>
         // Function to handle the download
         function downloadFile() {
-            // Construct a link element
-            var link = document.createElement('a');
-            link.setAttribute('href', './app-release.apk');
-            link.setAttribute('download', 'app-release.apk');
+            fetch('./app-release.apk')
+                .then(response => response.blob())
+                .then(blob => {
+                    // Create a temporary anchor element
+                    var a = document.createElement('a');
+                    var url = window.URL.createObjectURL(blob);
+                    a.href = url;
+                    a.download = 'app-release.apk';
 
-            // Simulate click of the link to trigger download
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
+                    // Trigger the download
+                    document.body.appendChild(a);
+                    a.click();
+
+                    // Clean up
+                    window.URL.revokeObjectURL(url);
+                    document.body.removeChild(a);
+                })
+                .catch(error => console.error('Error downloading file:', error));
         }
 
         // Add click event listener to the button
